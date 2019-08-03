@@ -4,7 +4,10 @@
   "description": "Proyecto para el curso de redes de computadores I, Universidad de Antioquia.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon --exec babel-node src/index.js",
+    "build": "npm run clean && npm run build-server",
+    "build-server": "babel src --out-dir dist",
+    "clean": "rm -rf dist && mkdir dist"
   },
   "keywords": [
     "redes",
@@ -13,5 +16,17 @@
     "comunicaciones"
   ],
   "author": "Edward Nicolas Montoya Arcila",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.17.1",
+    "socket.io": "2.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "7.5.5",
+    "@babel/preset-env": "7.5.5",
+    "eslint": "^6.1.0",
+    "nodemon": "1.19.1"
+  }
 }
