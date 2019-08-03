@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "socketServer"
+		},
+		{
+			"path": "client"
+		}
+	],
+	"settings": {}
+}
