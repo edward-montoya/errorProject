@@ -1,7 +1,6 @@
 import express from 'express';
 import http from 'http';
 import socketIO from 'socket.io';
-import { Client } from './models/client'
 import { Response } from './models/response'
 
 
@@ -19,27 +18,31 @@ var r = 0;
 io.on('connection', (socket) => {
     
     socket.on('communication', (message) => {
-        let client = JSON.parse(message);
-        if (!!client.control) {
-            let actualClient = new Client(socket.id, undefined);
+        let request = JSON.parse(message);
+        if (!!request.control) {
             let response = new Response('control', undefined, undefined);
             if (clients.length < 2) {
-                if(client.ctrlMessage === 'Transmisor' && t === 0) {
-                    actualClient.action = true;
+                if(request.data === 'Transmisor' && t === 0) {
                     t++;
-                    clients.push(actualClient);
-                    response.code = 201;
-                    response.data = actualClient;
-                    io.to(socket.id).emit('communication',JSON.stringify(response));
-                } else if ( client.ctrlMessage === 'Receptor' && r === 0 ) {
-                    actualClient.action = false;
+                    clients.push({id: socket.id, type: true});
+                    if (r === 1) {
+                        response.code = 201;
+                    } else {
+                        response.code = 202; 
+                    }
+                    io.emit('communication',JSON.stringify(response));
+                } else if ( request.data === 'Receptor' && r === 0 ) {
                     r++;
-                    clients.push(actualClient);
-                    response.data = actualClient;
-                    response.code = 201;
-                    io.to(socket.id).emit('communication',JSON.stringify(response));
+                    clients.push({id: socket.id, type: false});
+                    if (t === 1) {
+                        response.code = 201;
+                    } else {
+                        response.code = 202;   
+                    } 
+
+                    io.emit('communication',JSON.stringify(response));
                 } else {
-                    let  error = new Response('error', 106, 'No se pueden usar dos ' + client.ctrlMessage);
+                    let  error = new Response('error', 106, 'No se pueden usar dos ' + request.data);
                     io.to(socket.id).emit('communication',JSON.stringify(error));
                 }
                 if ( t === 1 && r === 1) {
@@ -47,26 +50,31 @@ io.on('connection', (socket) => {
                     response.data = 'Inicio de conexión';
                     io.emit('communication',JSON.stringify(response));
                 }
+            } else if (!!request.data && request.code === 600) {
+                response.data = request.data;
+                response.code = request.code;
+                socket.broadcast.emit('communication', JSON.stringify(response));
             } else {
                 let  error = new Response('error', 104, 'Máximo numero de conexiones');
                 io.to(socket.id).emit('communication',JSON.stringify(error));
             }
             
-        } else if ( clients.map((c) => c.id).includes(client.id) ) {
-
+        } else if ( clients.map(p => p.id).includes(socket.id) ) {
+            console.log(message);
+            socket.broadcast.emit('communication', message);
         } else {
         }
     });
     socket.on('disconnect', function() {
-        if (clients.map((c) => c.id).includes(socket.id)) {
-            let client = clients.pop();
-            if (client.action) {
-                t--;
+        if(clients.map(p => p.id).includes(socket.id)) {
+            let client =  clients.find(p => p.id === socket.id);
+            clients = clients.filter(p => p.id !== socket.id);        
+            if (client.type) {
+                t = 0;
             } else {
-                r--;
+                r = 0;
             }
         }
-        console.log('Got disconnect!');
         let  error = new Response('error', 104, 'Cliente desconectado');
         io.emit('communication',JSON.stringify(error));
     });
