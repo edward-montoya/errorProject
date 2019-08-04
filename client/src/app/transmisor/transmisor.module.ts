@@ -6,18 +6,36 @@ import { WaitingRoomComponent } from './waiting-room/waiting-room.component';
 import { SharedModule } from '../shared/shared.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NotFoundComponent } from '../shared/components/not-found/not-found.component';
+import { ConfigComponent } from './config/config.component';
+import {MatInputModule} from '@angular/material/input';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import { VrcLrcComponent } from './vrc-lrc/vrc-lrc.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import { HammingComponent } from './hamming/hamming.component';
+import {MatIconModule} from '@angular/material/icon';
+
 
 
 
 @NgModule({
-  declarations: [WaitingRoomComponent],
+  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent],
   imports: [
     CommonModule,
     TransmisorRoutingModule,
     FlexLayoutModule,
     MatProgressSpinnerModule,
-    SharedModule
+    MatInputModule,
+    ReactiveFormsModule,
+    SharedModule,
+    MatSelectModule,
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    ScrollingModule,
+    MatIconModule
   ]
 })
 export class TransmisorModule { }

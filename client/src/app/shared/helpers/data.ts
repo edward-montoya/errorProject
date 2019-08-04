@@ -1,6 +1,7 @@
 export interface Data {
-    control: boolean;
-    ctrlMessage: string;
-    message: string;
     id: string;
+    control: boolean;
+    state: string;
+    code: number;
+    data: string;
 }

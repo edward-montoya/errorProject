@@ -1,6 +1,70 @@
-<div *ngFor="let message of messages">
-    {{message}}
-</div>
+<div class="container">
+    <h1>VRC-LRC</h1>
+    <form [formGroup]="dataForm">
+        <div fxLayout="column" fxLayoutAlign="start" fxLayoutGap="1em">
+            <mat-form-field>
+                <textarea rows="10" formControlName="text" matInput placeholder="Ingrese texto a enviar"></textarea>
+            </mat-form-field>
+        </div>
+        <button (click)="code()" mat-raised-button>Codificar texto</button>
+    </form>
+    <div *ngIf="coding" fxLayout="column" fxLayoutAlign="center" fxLayoutGap="2em">
+        <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+            <h4>Texto codificado</h4>
+            <button (click)="errors()" color="warn" mat-raised-button>Introducir errores aleatorios</button>
+            <button (click)="sendMessage()" color="primary" mat-raised-button>Enviar</button>
+        </div>
 
-<input [(ngModel)]="message" />
-<button (click)="sendMessage()">Send</button>
+        <cdk-virtual-scroll-viewport class="list-container list-group" itemSize="50" style="height:400px">
+            <div *cdkVirtualFor="let byte of bytes; let i = index">
+                    <div style="padding: 10px" fxLayout="row" fxLayoutGap="1em">
+                        <mat-card (click)="setState(i,0)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][0] == 1, 'blank': errorInBytes[i][0] == 0 }"
+                            class="button">
+                            <p>{{byte[0]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,1)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][1] == 1, 'blank': errorInBytes[i][1] == 0 }"
+                            class="button">
+                            <p>{{byte[1]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,2)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][2] == 1, 'blank': errorInBytes[i][2] == 0 }"
+                            class="button">
+                            <p>{{byte[2]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,3)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][3] == 1, 'blank': errorInBytes[i][3] == 0 }"
+                            class="button">
+                            <p>{{byte[3]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,4)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][4] == 1, 'blank': errorInBytes[i][4] == 0 }"
+                            class="button">
+                            <p>{{byte[4]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,5)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][5] == 1, 'blank': errorInBytes[i][5] == 0 }"
+                            class="button">
+                            <p>{{byte[5]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,6)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][6] == 1, 'blank': errorInBytes[i][6] == 0 }"
+                            class="button">
+                            <p>{{byte[6]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,7)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][7] == 1, 'blank': errorInBytes[i][7] == 0 }"
+                            class="button">
+                            <p>{{byte[7]}}</p>
+                        </mat-card>
+                        <mat-card (click)="setState(i,8)"
+                            [ngClass]="{'errorInBytes': errorInBytes[i][8] == 1, 'blank': errorInBytes[i][8] == 0 }"
+                            class="button">
+                            <p>{{byte[8]}}</p>
+                        </mat-card>
+                    </div>
+            </div>
+        </cdk-virtual-scroll-viewport>
+    </div>
+</div>

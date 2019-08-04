@@ -1,0 +1,68 @@
+.progress-bar-container {
+    margin: 0 auto;
+    padding-top: 100px;
+    width: 80%;
+    
+    .progress-bar {
+      $selected-color: #27bb95;
+      $unselected-color: #dfdfdf;
+      $unselected-text-color: #b2b5ba;
+      
+      position: relative;
+      &__bar {
+        align-self: center;
+        background: $unselected-color;
+        flex-grow: 1;
+        height: 8px;
+        &--completed {
+          background: $selected-color;
+        }
+      }
+      &__circles {
+        display: flex;
+      }
+      &__circle {
+        background: #ffffff;
+        border-radius: 50%;
+        border: 3px solid $unselected-color;
+        color: $unselected-text-color;
+        cursor: pointer;
+        height: 50px;
+        line-height: 48px;
+        position: relative;
+        text-align: center;
+        width: 50px;
+  
+        &--completed {
+          background: $selected-color;
+          border-color: $selected-color;
+          .number {
+            color: #fff;
+            font-size: 1.8em;
+          }
+        }
+  
+        &--selected {
+          border-color: $selected-color;
+          color: $selected-color;
+        }
+  
+        .number {
+          font-size: 1.1em;
+          font-weight: bold;
+        }
+  
+        &__label {
+          top: 100%;
+          color: $unselected-text-color;
+          font-weight: 600;
+          left: 50%;
+          margin-bottom: 4px;
+          margin-left: -50px;
+          position: absolute;
+          text-align: center;
+          width: 100px;
+        }
+      }
+    }
+  }

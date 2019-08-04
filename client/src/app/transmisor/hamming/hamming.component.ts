@@ -1,30 +1,31 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { CommunicationService } from 'src/app/shared/services/communication.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-
+import * as hammingCode from 'hamming-code/index';
 
 @Component({
-  selector: 'app-vrc-lrc',
-  templateUrl: './vrc-lrc.component.html',
-  styleUrls: ['./vrc-lrc.component.scss']
+  selector: 'app-hamming',
+  templateUrl: './hamming.component.html',
+  styleUrls: ['./hamming.component.scss']
 })
-export class VrcLrcComponent implements OnInit {
+export class HammingComponent implements OnInit {
 
   dataForm: FormGroup;
   coding = false;
   config: any;
   bytes: number[][] = [];
   errorInBytes: number[][] = [];
-  counter = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  constructor(private communicationService: CommunicationService, private fb: FormBuilder, private zone: NgZone) {
+  constructor(private communicationService: CommunicationService, private fb: FormBuilder) {
     this.config = this.communicationService.getConfig();
     this.dataForm = this.fb.group({
       text: ['', [Validators.required]]
     });
    }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
 
   sendMessage() {
     let msg = '';
@@ -47,8 +48,8 @@ export class VrcLrcComponent implements OnInit {
 
   blank() {
     this.errorInBytes = new Array(this.bytes.length);
-    for (let i = 0; i < this.errorInBytes.length; i++) {
-      this.errorInBytes[i] = new Array(9).fill(0);
+    for (let i = 0; i < this.bytes.length; i++) {
+      this.errorInBytes[i] = new Array(12).fill(0);
     }
   }
 
@@ -60,44 +61,43 @@ export class VrcLrcComponent implements OnInit {
 
   code() {
     this.bytes = [];
-    this.coding = true;
-    let i = 0;
-    let j = 0;
-    let tmp = new Array();
+    let tmp = [];
     for (const char of this.dataForm.get('text').value) {
       if (!!char) {
         const charCode: number = char.charCodeAt();
-        const parity = this.in_parallel(charCode);
-        const v = this.pad(charCode.toString(2)) + parity;
-        for (const bit of v) {
+        const val = this.pad(charCode.toString(2));
+        const codingText = this.enconde(val);
+        for (const bit of codingText) {
           if (!!bit) {
             tmp.push( parseInt(bit, 10) );
-            j++;
           }
         }
         this.bytes.push(tmp);
         tmp = [];
-        i++;
       }
     }
-    this.bytes.forEach(byte => {
-      let k = 0;
-      for (const bit of byte) {
-          this.counter[k] = (bit) ? this.counter[k] + 1 : this.counter[k];
-          k++;
-      }
-    });
-    tmp = [];
-    this.counter.forEach(num => {
-      tmp.push(num % 2);
-    });
-    this.bytes.push(tmp);
     this.blank();
-    this.counter = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.coding = true;
+  }
+
+  enconde(data: string) {
+    const p1 = this.in_parallel(parseInt(data[0] + data[1] + data[3] +
+      data[4] + data[6], 2));
+    const p2 = this.in_parallel(parseInt(data[0] + data[2] + data[3] +
+      data[5] + data[6], 2));
+    const p3 = this.in_parallel(parseInt(data[1] + data[2] + data[3] +
+      data[7], 2));
+    const p4 = this.in_parallel(parseInt(data[4] + data[5] + data[6] +
+      data[7] , 2));
+    return `${p1}${p2}${data[0]}${p3}${data[1]}${data[2]}${data[3]}${p4}${data[4]}${data[5]}${data[6]}${data[7]}`;
+  }
+
+  up() {
+    window.scroll(0, 0);
   }
 
   pad(num: string, size: number = 8) {
-    const s = '0000000' + num;
+    const s = '000000000000000' + num;
     return s.substr(s.length - size);
   }
 
@@ -105,6 +105,5 @@ export class VrcLrcComponent implements OnInit {
     this.errorInBytes[i][j] = (!this.errorInBytes[i][j]) ? 1 : 0;
     this.bytes[i][j] = (!this.bytes[i][j]) ? 1 : 0;
   }
-
 
 }

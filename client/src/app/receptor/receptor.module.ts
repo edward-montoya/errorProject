@@ -5,17 +5,26 @@ import { ReceptorRoutingModule } from './receptor-routing.module';
 import { WaitingRoomComponent } from './waiting-room/waiting-room.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { NotFoundComponent } from '../shared/components/not-found/not-found.component';
 import { SharedModule } from '../shared/shared.module';
+import { VrcLrcComponent } from './vrc-lrc/vrc-lrc.component';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { HammingComponent } from './hamming/hamming.component';
+
+
 
 @NgModule({
-  declarations: [WaitingRoomComponent],
+  declarations: [WaitingRoomComponent, VrcLrcComponent, HammingComponent],
   imports: [
     CommonModule,
     ReceptorRoutingModule,
     MatProgressSpinnerModule,
     FlexLayoutModule,
-    SharedModule
+    SharedModule,
+    FormsModule,
+    MatCardModule,
+    ScrollingModule
   ]
 })
 export class ReceptorModule { }

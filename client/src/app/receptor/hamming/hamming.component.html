@@ -1,0 +1,42 @@
+<div fxLayout="column" fxLayoutGap="1em">
+    <h1>Receptor</h1>
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em" *ngIf="!waiting">
+        <mat-spinner
+            [diameter]="60">
+        </mat-spinner>
+        <p>Esperando mensaje...</p>
+    </div>
+    <div *ngIf="waiting">
+            <div *ngIf="!!message">
+                    <strong>Mensaje recuperado: </strong> {{message}}
+                </div>
+                <div >
+                    <div fxLayout="column" fxLayoutGap="1em" style="height:400px; overflow: scroll;" fxLayout="column" fxLayoutGap="1em">
+                        <div>Información entrante</div>
+                        <div *ngIf="bytes" >
+                            <div *ngFor="let byte of bytes; let i = index" fxLayout="row" fxLayoutGap="1em">
+                                <div *ngFor="let bit of byte; let j = index" fxLayout="column" fxLayoutGap="1em">
+                                    <mat-card (click)="setState(i,j)" class="button">
+                                        <p>{{bit}}</p>
+                                    </mat-card>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div  style="height:400px; overflow: scroll;"  fxLayout="column" fxLayoutGap="1em">
+                        <div>Detección de errores</div>
+                        <div *ngIf="!!state">ESTADO: {{state}}</div>
+                        <div *ngIf="errors" >
+                            <div *ngFor="let byte of errors; let i = index" fxLayout="row" fxLayoutGap="1em">
+                                <div *ngFor="let bit of byte; let j = index" fxLayout="column" fxLayoutGap="1em">
+                                    <mat-card (click)="setState(i,j)"
+                                        [ngClass]="{'errorInBytes': errors[i][j] == 1, 'blank': errors[i][j] == 0 }" class="button">
+                                        <p>{{bit}}</p>
+                                    </mat-card>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+</div>

@@ -17,18 +17,12 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
   response: any;
   private unsubscribe: Subject<void> = new Subject();
   ready = false;
-  counter = 0;
 
   ngOnInit() {
     this.transmisorService.deviceReady('Transmisor');
     this.transmisorService.getMessages().pipe(takeUntil(this.unsubscribe))
     .subscribe((msg: any) => {
-      console.log(msg);
-      if (msg.state === 'control') {
-        this.counter++;
-        console.log('Esperando receptor....');
-      }
-      if (this.counter === 2) {
+      if (msg.state === 'control' && (msg.code === 201 || msg.code === 200)) {
         this.router.navigate(['transmisor/config']);
       }
     }, error => {

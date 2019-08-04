@@ -1,1 +1,81 @@
-<p>vrc-lrc works!</p>
+<div fxLayout="column" fxLayoutGap="1em">
+    <h1>Receptor</h1>
+    <div *ngIf="!!message">
+            <strong>Mensaje recuperado: </strong> {{message}}
+        </div>
+    <div fxLayout="row" fxLayoutGap="0.2em">
+            <div fxFlex="50%" fxLayout="column" fxLayoutGap="1em">
+                    <div>Información entrante</div>
+                    <cdk-virtual-scroll-viewport *ngIf="bytes" itemSize="50" style="height:400px">
+                            <div *cdkVirtualFor="let byte of bytes; let i = index">
+                                <div style="padding: 10px" fxLayout="row" fxLayoutGap="1em">
+                                    <mat-card class="button">
+                                        <p>{{byte[0]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[1]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[2]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[3]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[4]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[5]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[6]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[7]}}</p>
+                                    </mat-card>
+                                    <mat-card class="button">
+                                        <p>{{byte[8]}}</p>
+                                    </mat-card>
+                                </div>
+                            </div>
+                        </cdk-virtual-scroll-viewport>
+            </div>
+            <div fxFlex="50%" fxLayout="column" fxLayoutGap="1em">
+                    <div>Detección de errores</div>
+                    <div *ngIf="!!state">ESTADO: {{state}}</div>
+                    <cdk-virtual-scroll-viewport *ngIf="errors" itemSize="50" style="height:400px">
+                            <div *cdkVirtualFor="let error of errors; let i = index">
+                                <div style="padding: 10px" fxLayout="row" fxLayoutGap="1em">
+                                    <mat-card [ngClass]="{ 'errorInByt': errors[i][0] === 1, 'blank': errors[i][0] === 0 }" class="button">
+                                        <p>{{error[0]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][1] === 1, 'blank': errors[i][1] === 0 }" class="button">
+                                        <p>{{error[1]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][2] === 1, 'blank': errors[i][2] === 0 }" class="button">
+                                        <p>{{error[2]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][3] === 1, 'blank': errors[i][3] === 0 }" class="button">
+                                        <p>{{error[3]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][4] === 1, 'blank': errors[i][4] === 0 }" class="button">
+                                        <p>{{error[4]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][5] === 1, 'blank': errors[i][5] === 0 }" class="button">
+                                        <p>{{error[5]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][6] === 1, 'blank': errors[i][6] === 0 }" class="button">
+                                        <p>{{error[6]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][7] === 1, 'blank': errors[i][7] === 0 }" class="button">
+                                        <p>{{error[7]}}</p>
+                                    </mat-card>
+                                    <mat-card [ngClass]="{ 'errorInByt' : errors[i][8] === 1, 'blank': errors[i][8] === 0 }" class="button">
+                                        <p>{{error[8]}}</p>
+                                    </mat-card>
+                                </div>
+                            </div>
+                        </cdk-virtual-scroll-viewport>
+            </div>
+    </div>
+</div>

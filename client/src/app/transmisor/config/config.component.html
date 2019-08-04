@@ -1,0 +1,43 @@
+<div class="container">
+    <form [formGroup]="config" (ngSubmit)="send()">
+        <div fxLayout="column" fxLayoutGap="1em">
+                <h4>Configuración información</h4>
+                <mat-form-field>
+                        <mat-label>Información a trasmitir</mat-label>
+                        <mat-select matNativeControl formControlName="infoType">
+                            <mat-option value="text">Texto</mat-option>
+                            <mat-option value="image">Imagen</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Tipo de control de errores</mat-label>
+                        <mat-select matNativeControl (selectionChange)="type()" formControlName="transmisionType">
+                            <mat-option value="ARQ">ARQ</mat-option>
+                            <mat-option value="FEC">FEC</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="config.get('transmisionType').value === 'ARQ'">
+                        <mat-label>Método de detección</mat-label>
+                        <mat-select matNativeControl (selectionChange)="method()" formControlName="methodArq">
+                            <mat-option value="VRC">VRC</mat-option>
+                            <mat-option value="LRC">LRC</mat-option>
+                            <mat-option value="CRC">CRC</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="config.get('transmisionType').value === 'ARQ'">
+                            <mat-label>Método de control de errores</mat-label>
+                            <mat-select matNativeControl (selectionChange)="type()" formControlName="controlArq">
+                                <mat-option value="VRC">STOP AND WAIT</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    <mat-form-field *ngIf="config.get('transmisionType').value === 'FEC'">
+                            <mat-label>Control de errores</mat-label>
+                            <mat-select formControlName="controlFec">
+                                    <mat-option value="HAM">Hamming</mat-option>
+                                    <mat-option value="VRC-LRC">VRC-LRC</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    <button  mat-raised-button>Aceptar</button>
+        </div>
+    </form>
+</div>

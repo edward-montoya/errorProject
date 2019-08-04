@@ -16,22 +16,29 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
   response: any;
   private unsubscribe: Subject<void> = new Subject();
   ready = false;
-  counter = 0;
+  message = 'Esperando transmisor';
 
   ngOnInit() {
     this.transmisorService.deviceReady('Receptor');
     this.transmisorService.getMessages().pipe(takeUntil(this.unsubscribe))
     .subscribe((msg: any) => {
-      console.log(msg);
-      if (msg.state === 'control') {
-        this.counter++;
-        console.log('Esperando transmisor....');
-      }
-      if (this.counter === 2) {
-        this.router.navigate(['receptor/config']);
+      if (msg.state === 'control' && msg.code === 200) {
+        this.message = 'Esperando configuración para inicio de comunicación';
+      } else if (msg.state === 'control' && msg.code === 600) {
+        const data = msg.data;
+        if (data.transmisionType === 'FEC') {
+          if (data.controlFec === 'VRC-LRC') {
+            this.router.navigate(['receptor/vrc-lrc']);
+          } else if (data.controlFec === 'HAM') {
+            this.router.navigate(['receptor/hamming']);
+          }
+        }
+      } else if (msg.state === 'error' && msg.code === 104) {
+        alert('Se desconecto el transmisor');
+        this.message = 'Esperando transmisor';
       }
     }, error => {
-      console.log('Error en la comunicación ' + error);
+      console.log('Error en la comunicación ');
     });
   }
 
