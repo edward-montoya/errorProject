@@ -44,6 +44,10 @@ export class CommunicationService {
     return this.type;
   }
 
+  public setConfig(config: any) {
+    this.config = config;
+  }
+
   public getConfig() {
     return this.config;
   }

@@ -30,6 +30,7 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
   lastByte = 0;
   resend = 0;
   unsuscribe: Subject<boolean> = new Subject<boolean>();
+  windowData = 0;
 
   constructor(  private vrc: VrcService,
                 private lrc: LrcService,
@@ -38,6 +39,15 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
                 private fb: FormBuilder,
                 private router: Router ) {
       this.config = this.communicationService.getConfig();
+      if (!!!this.config) {
+        alert('No hay configuración predefinida');
+        this.router.navigate(['']);
+      } else if (this.config.methodArq === 'LRC') {
+        this.windowData = 4;
+      } else if (this.config.methodArq === 'VRC') {
+        this.windowData = 1;
+      }
+
       this.dataForm = this.fb.group({
         text: ['', [Validators.required]]
       });
@@ -45,11 +55,18 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
 
   code() {
     if (this.dataForm.valid) {
-      console.log(this.dataForm.get('text').value);
-      this.coding = true;
-      this.bytes = this.lrc.encode(this.dataForm.get('text').value);
-      console.log(this.bytes);
-      this.blank();
+      if (this.config.methodArq === 'LRC') {
+        console.log(this.dataForm.get('text').value);
+        this.coding = true;
+        this.bytes = this.lrc.encode(this.dataForm.get('text').value);
+        console.log(this.bytes);
+        this.blank();
+      } else {
+        this.coding = true;
+        this.bytes = this.vrc.encode(this.dataForm.get('text').value);
+        console.log(this.bytes);
+        this.blank();
+      }
     }
   }
 
@@ -73,25 +90,25 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    this.send();
-    this.state = 1;
-    this.messages.unshift('Inicio de comunicación');
-    this.timer = setInterval(() => {
-      this.count--;
-      if (this.count === 0) {
-        this.count = 10;
-        this.actualByte = this.lastByte;
-        this.messages.push('Reenviando trama...');
-        this.resend++;
-        if (this.resend >= 4) {
-          clearInterval(this.timer);
-          alert('Conexión perdida. Volviendo a pagina principal');
-          this.router.navigate(['transmisor']);
-        } else {
-          this.send();
+      this.send();
+      this.state = 1;
+      this.messages.unshift('Inicio de comunicación');
+      this.timer = setInterval(() => {
+        this.count--;
+        if (this.count === 0) {
+          this.count = 10;
+          this.actualByte = this.lastByte;
+          this.messages.push('Reenviando trama...');
+          this.resend++;
+          if (this.resend >= 4) {
+            clearInterval(this.timer);
+            alert('Conexión perdida. Volviendo a pagina principal');
+            this.router.navigate(['transmisor']);
+          } else {
+            this.send();
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
   }
 
   send() {
@@ -105,7 +122,7 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
             if (i === 4) {
               this.sended = false;
               this.state = 2;
-             }
+              }
           }, 1000 * i );
         }
       } else {

@@ -38,6 +38,10 @@ export class StopAndWaitComponent implements OnInit, OnDestroy {
                 private fb: FormBuilder,
                 private router: Router ) {
       this.config = this.communicationService.getConfig();
+      if (!!!this.config) {
+        alert('No hay configuración predefinida');
+        this.router.navigate(['']);
+      }
       this.dataForm = this.fb.group({
         text: ['', [Validators.required]]
       });
@@ -45,11 +49,10 @@ export class StopAndWaitComponent implements OnInit, OnDestroy {
 
   code() {
     if (this.dataForm.valid) {
-      console.log(this.dataForm.get('text').value);
-      this.coding = true;
-      this.bytes = this.lrc.encode(this.dataForm.get('text').value);
-      console.log(this.bytes);
-      this.blank();
+        this.coding = true;
+        this.bytes = this.vrc.encode(this.dataForm.get('text').value);
+        console.log(this.bytes);
+        this.blank();
     }
   }
 
@@ -73,41 +76,35 @@ export class StopAndWaitComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    this.send();
-    this.state = 1;
-    this.messages.unshift('Inicio de comunicación');
-    this.timer = setInterval(() => {
-      this.count--;
-      if (this.count === 0) {
-        this.count = 10;
-        this.actualByte = this.lastByte;
-        this.messages.push('Reenviando trama...');
-        this.resend++;
-        if (this.resend >= 4) {
-          clearInterval(this.timer);
-          alert('Conexión perdida. Volviendo a pagina principal');
-          this.router.navigate(['transmisor']);
-        } else {
-          this.send();
+      this.send();
+      this.state = 1;
+      this.messages.unshift('Inicio de comunicación');
+      this.timer = setInterval(() => {
+        this.count--;
+        if (this.count === 0) {
+          this.count = 10;
+          this.actualByte = this.lastByte;
+          this.messages.push('Reenviando trama...');
+          this.resend++;
+          if (this.resend >= 4) {
+            clearInterval(this.timer);
+            alert('Conexión perdida. Volviendo a pagina principal');
+            this.router.navigate(['transmisor']);
+          } else {
+            this.send();
+          }
         }
-      }
-    }, 1000);
+      }, 1000);
   }
 
   send() {
       if (this.actualByte <= this.bytes.length) {
-        for (let i = 0 ; i < 4 ; i++) {
-          setTimeout(() => {
-            this.sended = true;
-            this.messages.push(`Trama ${this.actualByte} enviada`);
-            this.communicationService.sendMessage(this.bytes[this.actualByte].join(''));
-            this.actualByte++;
-            if (i === 4) {
-              this.sended = false;
-              this.state = 2;
-             }
-          }, 1000 * i );
-        }
+        setTimeout(() => {
+          this.sended = true;
+          this.messages.push(`Trama ${this.actualByte} enviada`);
+          this.communicationService.sendMessage(this.bytes[this.actualByte].join(''));
+          this.actualByte++;
+        }, 1000 );
       } else {
         clearInterval(this.timer);
       }

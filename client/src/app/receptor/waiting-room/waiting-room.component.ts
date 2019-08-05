@@ -26,6 +26,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         this.message = 'Esperando configuración para inicio de comunicación';
       } else if (msg.state === 'control' && msg.code === 600) {
         const data = msg.data;
+        this.transmisorService.setConfig(data);
         if (data.transmisionType === 'FEC') {
           if (data.controlFec === 'VRC-LRC') {
             this.router.navigate(['receptor/vrc-lrc']);
