@@ -43,6 +43,7 @@ export class HammingComponent implements OnInit {
           const arrayNum: number[] = element.split('').map((char: string) => parseInt(char, 10));
           if (error > 0 && error < 12) {
             this.errors[i][error - 1] = 1;
+            // tslint:disable-next-line: triple-equals
             this.characters[i] = this.characters[i].substring(0, error - 1) + `${ (this.characters[i][error - 1] == '1')  ? 0 : 1}` +
             this.characters[i].substring(error , this.characters[i].length);
           }

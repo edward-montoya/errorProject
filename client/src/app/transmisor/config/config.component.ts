@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CommunicationService } from 'src/app/shared/services/communication.service';
 import { Router } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss']
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent implements OnInit, OnDestroy {
 
   config: FormGroup;
+  unsuscribe: Subject<boolean> = new Subject<boolean>();
 
   constructor(private fb: FormBuilder, private communicationService: CommunicationService, private router: Router) {
     this.config = this.fb.group({
@@ -23,7 +26,7 @@ export class ConfigComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.communicationService.getMessages().subscribe((msg: any) => {
+    this.communicationService.getMessages().pipe(takeUntil(this.unsuscribe)).subscribe((msg: any) => {
       console.log(msg);
       if (msg.code === 104) {
         alert('Se desconecto el receptor');
@@ -32,6 +35,10 @@ export class ConfigComponent implements OnInit {
     }, error => {
 
     });
+  }
+  ngOnDestroy() {
+    this.unsuscribe.next(true);
+    this.unsuscribe.unsubscribe();
   }
 
   type() {
@@ -55,6 +62,11 @@ export class ConfigComponent implements OnInit {
           this.router.navigate(['transmisor/vrc-lrc']);
         } else if (this.config.get('controlFec').value === 'HAM') {
           this.router.navigate(['transmisor/hamming']);
+        }
+      } else if (this.config.get('transmisionType').value === 'ARQ') {
+        this.communicationService.sendConfig(this.config.value);
+        if (this.config.get('controlArq').value === 'SW') {
+          this.router.navigate(['transmisor/stop-and-wait']);
         }
       }
     }

@@ -71,13 +71,12 @@ export class VrcLrcComponent implements OnInit {
           return;
         } else if (this.noData === 1) {
           this.broken = false;
-          let uno =this.characters[this.i].substring(0, this.j );
-          let dos = `${ (this.characters[this.i][this.j] == '1')  ? 0 : 1}`;
-          let tres = this.characters[this.i].substring(this.j + 1 , this.characters[this.i].length);
-          let cuatro = this.characters[this.i][this.j];
-          this.characters[this.i] = uno + dos + tres;
+          this.characters[this.i] = this.characters[this.i].substring(0, this.j ) +
+           // tslint:disable-next-line: triple-equals
+           `${ (this.characters[this.i][this.j] == '1')  ? 0 : 1}` +
+           this.characters[this.i].substring(this.j + 1 , this.characters[this.i].length);
         }
-        for (let i = 0 ; i < this.characters.length -1 ; i++) {
+        for (let i = 0 ; i < this.characters.length - 1 ; i++) {
           this.message = this.message + String.fromCharCode(parseInt(this.characters[i].substring(0, this.characters[i].length - 1), 2));
         }
         this.errorCols = [];
@@ -87,7 +86,6 @@ export class VrcLrcComponent implements OnInit {
       }
     }, error => {
       console.log(error);
-      
     });
   }
 

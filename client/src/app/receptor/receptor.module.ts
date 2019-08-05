@@ -11,11 +11,12 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HammingComponent } from './hamming/hamming.component';
+import { StopAndWaitComponent } from './stop-and-wait/stop-and-wait.component';
 
 
 
 @NgModule({
-  declarations: [WaitingRoomComponent, VrcLrcComponent, HammingComponent],
+  declarations: [WaitingRoomComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent],
   imports: [
     CommonModule,
     ReceptorRoutingModule,

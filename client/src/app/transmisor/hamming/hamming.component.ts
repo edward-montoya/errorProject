@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { CommunicationService } from 'src/app/shared/services/communication.service';
-import * as hammingCode from 'hamming-code/index';
 
 @Component({
   selector: 'app-hamming',

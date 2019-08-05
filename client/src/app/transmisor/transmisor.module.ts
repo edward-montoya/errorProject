@@ -16,12 +16,13 @@ import { MatCardModule } from '@angular/material/card';
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import { HammingComponent } from './hamming/hamming.component';
 import {MatIconModule} from '@angular/material/icon';
+import { StopAndWaitComponent } from './stop-and-wait/stop-and-wait.component';
 
 
 
 
 @NgModule({
-  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent],
+  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent],
   imports: [
     CommonModule,
     TransmisorRoutingModule,
