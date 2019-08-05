@@ -21,13 +21,13 @@
                         <mat-select matNativeControl (selectionChange)="type()" formControlName="methodArq">
                             <mat-option value="VRC">VRC</mat-option>
                             <mat-option value="LRC">LRC</mat-option>
-                            <mat-option value="CRC">CRC</mat-option>
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field *ngIf="config.get('transmisionType').value === 'ARQ'">
                             <mat-label>Método de control de errores</mat-label>
                             <mat-select matNativeControl formControlName="controlArq">
-                                <mat-option value="SW">STOP AND WAIT</mat-option>
+                                <mat-option *ngIf="config.get('methodArq').value === 'VRC'" value="SW">STOP AND WAIT</mat-option>
+                                <mat-option value="BN">GO TO BACK N</mat-option>
                             </mat-select>
                         </mat-form-field>
                     <mat-form-field *ngIf="config.get('transmisionType').value === 'FEC'">

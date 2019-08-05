@@ -17,12 +17,13 @@ import {ScrollingModule} from '@angular/cdk/scrolling';
 import { HammingComponent } from './hamming/hamming.component';
 import {MatIconModule} from '@angular/material/icon';
 import { StopAndWaitComponent } from './stop-and-wait/stop-and-wait.component';
+import { GoToBackNComponent } from './go-to-back-n/go-to-back-n.component';
 
 
 
 
 @NgModule({
-  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent],
+  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent, GoToBackNComponent],
   imports: [
     CommonModule,
     TransmisorRoutingModule,

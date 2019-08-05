@@ -67,6 +67,8 @@ export class ConfigComponent implements OnInit, OnDestroy {
         this.communicationService.sendConfig(this.config.value);
         if (this.config.get('controlArq').value === 'SW') {
           this.router.navigate(['transmisor/stop-and-wait']);
+        } else if (this.config.get('controlArq').value === 'BN') {
+          this.router.navigate(['transmisor/go-to-back-n']);
         }
       }
     }

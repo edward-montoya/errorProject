@@ -12,11 +12,14 @@ import { MatCardModule } from '@angular/material/card';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HammingComponent } from './hamming/hamming.component';
 import { StopAndWaitComponent } from './stop-and-wait/stop-and-wait.component';
+import { GoToBackNComponent } from './go-to-back-n/go-to-back-n.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 
 
 
 @NgModule({
-  declarations: [WaitingRoomComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent],
+  declarations: [WaitingRoomComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent, GoToBackNComponent],
   imports: [
     CommonModule,
     ReceptorRoutingModule,
@@ -25,7 +28,8 @@ import { StopAndWaitComponent } from './stop-and-wait/stop-and-wait.component';
     SharedModule,
     FormsModule,
     MatCardModule,
-    ScrollingModule
+    ScrollingModule,
+    MatCheckboxModule
   ]
 })
 export class ReceptorModule { }

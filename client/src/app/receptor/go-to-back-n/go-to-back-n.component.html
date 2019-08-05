@@ -1,0 +1,37 @@
+<div fxLayout="column" fxLayoutGap="1em">
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+        <h4>Datos en el receptor</h4>
+        <mat-checkbox [(ngModel)]="shutdown">Apagar receptor</mat-checkbox>
+    </div>
+    <div fxLayout="column" fxLayoutAlign="center center">
+        Mensaje: <div>{{getMessage()}}</div>
+    </div>
+    <div fxLayout="row" fxLayoutGap="1em">
+        <div fxFlex="50%" fxLayout="column" fxLayoutAlign="center">
+            <div *ngFor="let byte of bytes; let i = index" fxLayout="column" fxLayoutGap="2em">
+                <div fxLayout="row" fxLayoutGap="2em">
+                    <mat-card class="button" *ngFor="let bit of byte; let j = index"
+                        (click)="setState(i, j)">
+                        <p>{{bit}}</p>
+                    </mat-card>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+        <div fxFlex="50%" fxLayout="column">
+            <div *ngIf="messages.length == 0">
+                No hay mensajes para mostrar. Esperando...
+            </div>
+            <div *ngIf="messages.length > 0">
+                <ul *ngFor="let message of messages" fxLayout="column">
+                    
+                    <li class="message">
+                        {{message}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

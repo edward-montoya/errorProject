@@ -35,6 +35,8 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         } else if (data.transmisionType === 'ARQ') {
           if (data.controlArq === 'SW') {
             this.router.navigate(['receptor/stop-and-wait']);
+          } else if (data.controlArq === 'BN') {
+            this.router.navigate(['receptor/go-to-back-n']);
           }
         }
       } else if (msg.state === 'error' && msg.code === 104) {
