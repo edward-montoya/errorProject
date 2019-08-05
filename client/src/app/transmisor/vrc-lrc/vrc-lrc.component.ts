@@ -1,34 +1,65 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommunicationService } from 'src/app/shared/services/communication.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-vrc-lrc',
   templateUrl: './vrc-lrc.component.html',
   styleUrls: ['./vrc-lrc.component.scss']
 })
-export class VrcLrcComponent implements OnInit {
-
+export class VrcLrcComponent implements OnInit, OnDestroy {
   dataForm: FormGroup;
   coding = false;
   config: any;
   bytes: number[][] = [];
   errorInBytes: number[][] = [];
   counter = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  unsuscribe: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private communicationService: CommunicationService, private fb: FormBuilder, private zone: NgZone) {
+  constructor(
+    private communicationService: CommunicationService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
     this.config = this.communicationService.getConfig();
+    if (!!!this.config) {
+      alert('No hay configuración predefinida');
+      this.router.navigate(['']);
+    }
     this.dataForm = this.fb.group({
       text: ['', [Validators.required]]
     });
-   }
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.communicationService
+      .getMessages()
+      .pipe(takeUntil(this.unsuscribe))
+      .subscribe(
+        (msg: any) => {
+          if (msg.state === 'error' && msg.code === 104) {
+            alert('Se desconecto el receptor');
+            this.router.navigate(['']);
+          }
+        },
+        error => {
+          alert('Error');
+          this.router.navigate(['']);
+        }
+      );
+  }
+
+  ngOnDestroy() {
+    this.unsuscribe.next(true);
+    this.unsuscribe.unsubscribe();
+  }
 
   sendMessage() {
     let msg = '';
-    this.bytes.forEach((byte) => {
+    this.bytes.forEach(byte => {
       msg = msg + byte.join('') + '-';
     });
     msg = msg.substring(0, msg.length - 1);
@@ -44,7 +75,6 @@ export class VrcLrcComponent implements OnInit {
     return (0x6996 >> v) & 1;
   }
 
-
   blank() {
     this.errorInBytes = new Array(this.bytes.length);
     for (let i = 0; i < this.errorInBytes.length; i++) {
@@ -54,7 +84,7 @@ export class VrcLrcComponent implements OnInit {
 
   errors() {
     for (let i = 0; i < this.bytes.length; i++) {
-        this.setState(i, Math.floor(Math.random() * 9));
+      this.setState(i, Math.floor(Math.random() * 9));
     }
   }
 
@@ -71,7 +101,7 @@ export class VrcLrcComponent implements OnInit {
         const v = this.pad(charCode.toString(2)) + parity;
         for (const bit of v) {
           if (!!bit) {
-            tmp.push( parseInt(bit, 10) );
+            tmp.push(parseInt(bit, 10));
             j++;
           }
         }
@@ -83,8 +113,8 @@ export class VrcLrcComponent implements OnInit {
     this.bytes.forEach(byte => {
       let k = 0;
       for (const bit of byte) {
-          this.counter[k] = (bit) ? this.counter[k] + 1 : this.counter[k];
-          k++;
+        this.counter[k] = bit ? this.counter[k] + 1 : this.counter[k];
+        k++;
       }
     });
     tmp = [];
@@ -102,9 +132,7 @@ export class VrcLrcComponent implements OnInit {
   }
 
   setState(i: number, j: number) {
-    this.errorInBytes[i][j] = (!this.errorInBytes[i][j]) ? 1 : 0;
-    this.bytes[i][j] = (!this.bytes[i][j]) ? 1 : 0;
+    this.errorInBytes[i][j] = !this.errorInBytes[i][j] ? 1 : 0;
+    this.bytes[i][j] = !this.bytes[i][j] ? 1 : 0;
   }
-
-
 }

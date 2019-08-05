@@ -1,39 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { CommunicationService } from 'src/app/shared/services/communication.service';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-hamming',
   templateUrl: './hamming.component.html',
   styleUrls: ['./hamming.component.scss']
 })
-export class HammingComponent implements OnInit {
-
+export class HammingComponent implements OnInit, OnDestroy {
   dataForm: FormGroup;
   coding = false;
   config: any;
   bytes: number[][] = [];
   errorInBytes: number[][] = [];
+  unsuscribe: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private communicationService: CommunicationService, private fb: FormBuilder) {
+  constructor(
+    private communicationService: CommunicationService,
+    private router: Router,
+    private fb: FormBuilder
+  ) {
     this.config = this.communicationService.getConfig();
+    if (!!!this.config) {
+      alert('No hay configuración predefinida');
+      this.router.navigate(['']);
+    }
     this.dataForm = this.fb.group({
       text: ['', [Validators.required]]
     });
-   }
+  }
 
   ngOnInit() {
+    this.communicationService
+      .getMessages()
+      .pipe(takeUntil(this.unsuscribe))
+      .subscribe(
+        (msg: any) => {
+          if (msg.state === 'error' && msg.code === 104) {
+            alert('Se desconecto el receptor');
+            this.router.navigate(['']);
+          }
+        },
+        error => {
+          alert('Error');
+          this.router.navigate(['']);
+        }
+      );
+  }
 
+  ngOnDestroy() {
+    this.unsuscribe.next(true);
+    this.unsuscribe.unsubscribe();
   }
 
   sendMessage() {
     let msg = '';
-    this.bytes.forEach((byte) => {
+    this.bytes.forEach(byte => {
       msg = msg + byte.join('') + '-';
     });
     msg = msg.substring(0, msg.length - 1);
     this.communicationService.sendMessage(msg);
     msg = '';
+    alert('Mensaje enviado');
   }
   // tslint:disable: no-bitwise
   in_parallel(v: number) {
@@ -44,7 +75,6 @@ export class HammingComponent implements OnInit {
     return (0x6996 >> v) & 1;
   }
 
-
   blank() {
     this.errorInBytes = new Array(this.bytes.length);
     for (let i = 0; i < this.bytes.length; i++) {
@@ -54,7 +84,7 @@ export class HammingComponent implements OnInit {
 
   errors() {
     for (let i = 0; i < this.bytes.length; i++) {
-        this.setState(i, Math.floor(Math.random() * 9));
+      this.setState(i, Math.floor(Math.random() * 9));
     }
   }
 
@@ -68,7 +98,7 @@ export class HammingComponent implements OnInit {
         const codingText = this.enconde(val);
         for (const bit of codingText) {
           if (!!bit) {
-            tmp.push( parseInt(bit, 10) );
+            tmp.push(parseInt(bit, 10));
           }
         }
         this.bytes.push(tmp);
@@ -80,15 +110,21 @@ export class HammingComponent implements OnInit {
   }
 
   enconde(data: string) {
-    const p1 = this.in_parallel(parseInt(data[0] + data[1] + data[3] +
-      data[4] + data[6], 2));
-    const p2 = this.in_parallel(parseInt(data[0] + data[2] + data[3] +
-      data[5] + data[6], 2));
-    const p3 = this.in_parallel(parseInt(data[1] + data[2] + data[3] +
-      data[7], 2));
-    const p4 = this.in_parallel(parseInt(data[4] + data[5] + data[6] +
-      data[7] , 2));
-    return `${p1}${p2}${data[0]}${p3}${data[1]}${data[2]}${data[3]}${p4}${data[4]}${data[5]}${data[6]}${data[7]}`;
+    const p1 = this.in_parallel(
+      parseInt(data[0] + data[1] + data[3] + data[4] + data[6], 2)
+    );
+    const p2 = this.in_parallel(
+      parseInt(data[0] + data[2] + data[3] + data[5] + data[6], 2)
+    );
+    const p3 = this.in_parallel(
+      parseInt(data[1] + data[2] + data[3] + data[7], 2)
+    );
+    const p4 = this.in_parallel(
+      parseInt(data[4] + data[5] + data[6] + data[7], 2)
+    );
+    return `${p1}${p2}${data[0]}${p3}${data[1]}${data[2]}${data[3]}${p4}${
+      data[4]
+    }${data[5]}${data[6]}${data[7]}`;
   }
 
   up() {
@@ -101,8 +137,7 @@ export class HammingComponent implements OnInit {
   }
 
   setState(i: number, j: number) {
-    this.errorInBytes[i][j] = (!this.errorInBytes[i][j]) ? 1 : 0;
-    this.bytes[i][j] = (!this.bytes[i][j]) ? 1 : 0;
+    this.errorInBytes[i][j] = !this.errorInBytes[i][j] ? 1 : 0;
+    this.bytes[i][j] = !this.bytes[i][j] ? 1 : 0;
   }
-
 }

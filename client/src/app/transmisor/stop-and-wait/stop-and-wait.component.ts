@@ -14,7 +14,6 @@ import { Subject } from 'rxjs';
   styleUrls: ['./stop-and-wait.component.scss']
 })
 export class StopAndWaitComponent implements OnInit, OnDestroy {
-
   dataForm: FormGroup;
   coding = false;
   config: any;
@@ -31,28 +30,28 @@ export class StopAndWaitComponent implements OnInit, OnDestroy {
   resend = 0;
   unsuscribe: Subject<boolean> = new Subject<boolean>();
 
-  constructor(  private vrc: VrcService,
-                private lrc: LrcService,
-                private crc: CrcService,
-                private communicationService: CommunicationService,
-                private fb: FormBuilder,
-                private router: Router ) {
-      this.config = this.communicationService.getConfig();
-      if (!!!this.config) {
-        alert('No hay configuración predefinida');
-        this.router.navigate(['']);
-      }
-      this.dataForm = this.fb.group({
-        text: ['', [Validators.required]]
-      });
+  constructor(
+    private vrc: VrcService,
+    private communicationService: CommunicationService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    this.config = this.communicationService.getConfig();
+    if (!!!this.config) {
+      alert('No hay configuración predefinida');
+      this.router.navigate(['']);
+    }
+    this.dataForm = this.fb.group({
+      text: ['', [Validators.required]]
+    });
   }
 
   code() {
     if (this.dataForm.valid) {
-        this.coding = true;
-        this.bytes = this.vrc.encode(this.dataForm.get('text').value);
-        console.log(this.bytes);
-        this.blank();
+      this.coding = true;
+      this.bytes = this.vrc.encode(this.dataForm.get('text').value);
+      console.log(this.bytes);
+      this.blank();
     }
   }
 
@@ -76,43 +75,45 @@ export class StopAndWaitComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-      this.send();
-      this.state = 1;
-      this.messages.unshift('Inicio de comunicación');
-      this.timer = setInterval(() => {
-        this.count--;
-        if (this.count === 0) {
-          this.count = 10;
-          this.actualByte = this.lastByte;
-          this.messages.push('Reenviando trama...');
-          this.resend++;
-          if (this.resend >= 4) {
-            clearInterval(this.timer);
-            alert('Conexión perdida. Volviendo a pagina principal');
-            this.router.navigate(['transmisor']);
-          } else {
-            this.send();
-          }
+    this.send();
+    this.state = 1;
+    this.messages.unshift('Inicio de comunicación');
+    this.timer = setInterval(() => {
+      this.count--;
+      if (this.count === 0) {
+        this.count = 10;
+        this.actualByte = this.lastByte;
+        this.messages.push('Reenviando trama...');
+        this.resend++;
+        if (this.resend >= 4) {
+          clearInterval(this.timer);
+          alert('Conexión perdida. Volviendo a pagina principal');
+          this.router.navigate(['transmisor']);
+        } else {
+          this.send();
         }
-      }, 1000);
+      }
+    }, 1000);
   }
 
   send() {
-      if (this.actualByte <= this.bytes.length) {
-        setTimeout(() => {
-          this.sended = true;
-          this.messages.push(`Trama ${this.actualByte} enviada`);
-          this.communicationService.sendMessage(this.bytes[this.actualByte].join(''));
-          this.actualByte++;
-        }, 1000 );
-      } else {
-        clearInterval(this.timer);
-      }
+    if (this.actualByte <= this.bytes.length) {
+      setTimeout(() => {
+        this.sended = true;
+        this.messages.push(`Trama ${this.actualByte} enviada`);
+        this.communicationService.sendMessage(
+          this.bytes[this.actualByte].join('')
+        );
+        this.actualByte++;
+      }, 1000);
+    } else {
+      clearInterval(this.timer);
+    }
   }
 
   setState(i: number, j: number) {
-    this.errorInBytes[i][j] = (!this.errorInBytes[i][j]) ? 1 : 0;
-    this.bytes[i][j] = (!this.bytes[i][j]) ? 1 : 0;
+    this.errorInBytes[i][j] = !this.errorInBytes[i][j] ? 1 : 0;
+    this.bytes[i][j] = !this.bytes[i][j] ? 1 : 0;
   }
 
   ngOnInit() {
@@ -124,42 +125,50 @@ export class StopAndWaitComponent implements OnInit, OnDestroy {
     this.lastByte = 0;
     this.resend = 0;
     clearInterval(this.timer);
-    this.communicationService.getMessages().pipe(takeUntil(this.unsuscribe)).subscribe((msg: any) => {
-      if (msg.code === 400) {
-        console.log(msg);
-        if (msg.data) {
-          this.lastByte = this.actualByte;
-          this.messages.push('Respuesta recibida ACK');
-          this.count = 10;
-          this.state = 1;
-          if (this.actualByte >= this.bytes.length) {
-            clearInterval(this.timer);
-            this.messages.push('Final de trasmisión');
-            this.actualByte = 0;
-            this.count = 10;
-            this.state = 3;
-            this.sended = false;
-            this.waiting = false;
-            this.lastByte = 0;
-            this.resend = 0;
-            return;
+    this.communicationService
+      .getMessages()
+      .pipe(takeUntil(this.unsuscribe))
+      .subscribe(
+        (msg: any) => {
+          if (msg.code === 400) {
+            console.log(msg);
+            if (msg.data) {
+              this.lastByte = this.actualByte;
+              this.messages.push('Respuesta recibida ACK');
+              this.count = 10;
+              this.state = 1;
+              if (this.actualByte >= this.bytes.length) {
+                clearInterval(this.timer);
+                this.messages.push('Final de trasmisión');
+                this.actualByte = 0;
+                this.count = 10;
+                this.state = 3;
+                this.sended = false;
+                this.waiting = false;
+                this.lastByte = 0;
+                this.resend = 0;
+                return;
+              }
+            } else {
+              this.messages.push('Respuesta recibida NACK');
+              this.count = 10;
+              this.actualByte = this.lastByte;
+              this.state = 1;
+            }
+            this.send();
+          } else if (msg.state === 'error' && msg.code === 104) {
+            alert('Se desconecto el receptor');
+            this.router.navigate(['']);
           }
-        } else {
-          this.messages.push('Respuesta recibida NACK');
-          this.count = 10;
-          this.actualByte = this.lastByte;
-          this.state = 1;
+        },
+        error => {
+          console.log(error);
         }
-        this.send();
-      }
-    }, error => {
-      console.log(error);
-    });
+      );
   }
 
   ngOnDestroy() {
     this.unsuscribe.next(true);
     this.unsuscribe.unsubscribe();
   }
-
 }

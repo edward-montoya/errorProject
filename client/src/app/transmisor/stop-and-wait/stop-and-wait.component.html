@@ -1,5 +1,5 @@
 <div fxLayout="column" fxLayoutGap="1em">
-    <h1>GO TO BACK N</h1>
+    <h1>STOP AND WAIT</h1>
     <form [formGroup]="dataForm">
         <div fxLayout="column" fxLayoutAlign="start" fxLayoutGap="1em">
             <mat-form-field>
@@ -11,7 +11,8 @@
     <div *ngIf="coding" fxLayout="column" fxLayoutGap="1em">
         <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
             <h4>Texto codificado</h4>
-            <button [disabled]="state !== 0 && state !== 3" (click)="sendMessage()" color="primary" mat-raised-button>Enviar</button>
+            <button [disabled]="state !== 0 && state !== 3" (click)="sendMessage()" color="primary"
+                mat-raised-button>Enviar</button>
         </div>
         <div fxLayout="column" fxLayoutAlign="center center">
             Estado: <div [ngClass]="">{{getMessage()}}</div>
@@ -19,7 +20,8 @@
         <div fxLayout="row" fxLayoutGap="1em">
             <div fxFlex="50%" fxLayout="column" fxLayoutAlign="center">
                 <div *ngFor="let byte of bytes; let i = index" fxLayout="column" fxLayoutGap="2em">
-                    <div [ngClass]="{'actualByte': (i == actualByte && !sended), 'sendedByte': (i == actualByte && sended)}" fxLayout="row" fxLayoutGap="2em">
+                    <div [ngClass]="{'actualByte': (i == actualByte && !sended), 'sendedByte': (i == actualByte && sended)}"
+                        fxLayout="row" fxLayoutGap="2em">
                         <mat-card class="button" *ngFor="let bit of byte; let j = index"
                             [ngClass]="{'errorInBytes': errorInBytes[i][j] == 1, 'blank': errorInBytes[i][j] == 0 }"
                             (click)="setState(i, j)">
@@ -37,7 +39,7 @@
                 </div>
                 <div *ngIf="messages.length > 0">
                     <ul *ngFor="let message of messages" fxLayout="column">
-                        
+
                         <li class="message">
                             {{message}}
                         </li>
