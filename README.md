@@ -179,3 +179,31 @@ Para la simulación se implementó Hamming (8, 4), en este algoritmo utilizaremo
 Cada “bit de paridad” comprobará unos bits determinados, dependiendo de la posición que ocupe y siguiendo las normas del la imágen.
 
 ![image](https://jarroba.com/wp-content/uploads/2016/10/Hamming-Matriz-sindrome-www.jarroba.com_.png 'Imagen hamming')
+
+## Lógica conexión web socket
+
+El servidor NODE-SockerIO tiene la función de replicar los mensajes a los diferentes clientes según la necesidad.
+
+En el servidor se verífican:
+
+1. Conexión y desconexión de clientes.
+2. Envío de información.
+3. Errores del socket.
+4. Máximo numero de conexiones.
+
+Los códigos usádos para enmarcar las tramas son:
+
+**state:**
+
+- 'control', verifíca que exista conexión en el socket;
+- 'request', trama
+- 'error', error en el socket
+
+**code:**
+
+- 201, a la espera de receptor/emisor.
+- 202, enlace exitoso.
+- 200, inicio de configuración.
+- 105, error, duplicidad, no se pueden conectar dos transmisores/emisores.
+- 106, error, máximo numero de transmisores/receptores.
+- 104, error, receptor/emisor desconectado.
