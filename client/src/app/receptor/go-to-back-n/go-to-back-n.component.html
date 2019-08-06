@@ -3,15 +3,36 @@
         <h4>Datos en el receptor</h4>
         <mat-checkbox [(ngModel)]="shutdown">Apagar receptor</mat-checkbox>
     </div>
-    <div fxLayout="column" fxLayoutAlign="center center">
-        Mensaje: <div>{{getMessage()}}</div>
+    <div *ngIf="config.infoType === 'image'">
+        <div fxFlex="1 1 80%" style="width: 100%; padding: 60px;" fxLayout="column" fxLayoutAlign="center center">
+            <div fxLayout="row" *ngFor="let row of matrix; let i = index">
+                <div fxLayout="column" *ngFor="let col of row ; let j = index">
+                    <div (click)="setColorMatrix(i,j)" [ngClass]="{
+                          'style0': matrix[i][j] === 0,
+                          'style1': matrix[i][j] === 1,
+                          'style2': matrix[i][j] === 2,
+                          'style3': matrix[i][j] === 3,
+                          'style4': matrix[i][j] === 4,
+                          'style5': matrix[i][j] === 5,
+                          'style6': matrix[i][j] === 6,
+                          'style7': matrix[i][j] === 7
+                        }">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="config.infoType === 'text'">
+        <div fxLayout="column" fxLayoutAlign="center center">
+            Mensaje: <div>{{getMessage()}}</div>
+        </div>
     </div>
     <div fxLayout="row" fxLayoutGap="1em">
         <div fxFlex="50%" fxLayout="column" fxLayoutAlign="center">
             <div *ngFor="let byte of bytes; let i = index" fxLayout="column" fxLayoutGap="2em">
                 <div fxLayout="row" fxLayoutGap="2em">
-                    <mat-card class="button" *ngFor="let bit of byte; let j = index"
-                        (click)="setState(i, j)">
+                    <mat-card class="button" *ngFor="let bit of byte; let j = index" (click)="setState(i, j)">
                         <p>{{bit}}</p>
                     </mat-card>
                 </div>
@@ -26,7 +47,7 @@
             </div>
             <div *ngIf="messages.length > 0">
                 <ul *ngFor="let message of messages" fxLayout="column">
-                    
+
                     <li class="message">
                         {{message}}
                     </li>

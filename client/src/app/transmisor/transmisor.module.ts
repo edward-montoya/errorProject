@@ -18,12 +18,13 @@ import { HammingComponent } from './hamming/hamming.component';
 import {MatIconModule} from '@angular/material/icon';
 import { StopAndWaitComponent } from './stop-and-wait/stop-and-wait.component';
 import { GoToBackNComponent } from './go-to-back-n/go-to-back-n.component';
+import { ImageEncryptComponent } from './image-encrypt/image-encrypt.component';
 
 
 
 
 @NgModule({
-  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent, GoToBackNComponent],
+  declarations: [WaitingRoomComponent, ConfigComponent, VrcLrcComponent, HammingComponent, StopAndWaitComponent, GoToBackNComponent, ImageEncryptComponent],
   imports: [
     CommonModule,
     TransmisorRoutingModule,

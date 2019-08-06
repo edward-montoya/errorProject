@@ -1,0 +1,82 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div fxLayout="column" style="height: 100%">
+    <div style="padding: 60px;" fxLayout="column">
+        <mat-form-field>
+            <input matInput type="number" placeholder="Ingrese filas" [(ngModel)]="rows">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput type="number" placeholder="Ingrese columnas" [(ngModel)]="cols">
+        </mat-form-field>
+        <div fxLayout="row" fxLayoutGap="1em">
+            <button mat-flat-button color="primary" (click)="reStart()" mat-button>Reiniciar</button>
+            <button mat-flat-button color="primary" (click)="genMatrix()" mat-button>Generar matriz</button>
+        </div>
+    </div>
+    <div *ngIf="ready" fxLayout="row" fxLayoutGap="1em">
+        <div style="padding: 30px" fxFlex="1 1 20%" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1em">
+            <div fxFlex="1 1 auto" fxLayout="row wrap" fxLayoutGap="1em">
+                <div (click)="setState(0)" class="style0">
+
+                </div>
+                <div (click)="setState(1)" class="style1">
+
+                </div>
+                <div (click)="setState(2)" class="style2">
+
+                </div>
+                <div (click)="setState(3)" class="style3">
+
+                </div>
+                <div (click)="setState(4)" class="style4">
+
+                </div>
+                <div (click)="setState(5)" class="style5">
+
+                </div>
+                <div (click)="setState(6)" class="style6">
+
+                </div>
+                <div (click)="setState(7)" class="style7">
+
+                </div>
+            </div>
+            <div fxFlex="1 1 auto">
+                <p>Color actual</p>
+                <div [ngClass]="{
+              'style0': state === 0,
+              'style1': state === 1,
+              'style2': state === 2,
+              'style3': state === 3,
+              'style4': state === 4,
+              'style5': state === 5,
+              'style6': state === 6,
+              'style7': state === 7
+            }">
+
+                </div>
+            </div>
+        </div>
+        <div fxFlex="1 1 80%" style="width: 100%; padding: 60px;" fxLayout="column" fxLayoutAlign="center center">
+            <div fxLayout="row" *ngFor="let row of matrix; let i = index">
+                <div fxLayout="column" *ngFor="let col of row ; let j = index">
+                    <div (click)="setColorMatrix(i,j)" [ngClass]="{
+                  'style0': matrix[i][j] === 0,
+                  'style1': matrix[i][j] === 1,
+                  'style2': matrix[i][j] === 2,
+                  'style3': matrix[i][j] === 3,
+                  'style4': matrix[i][j] === 4,
+                  'style5': matrix[i][j] === 5,
+                  'style6': matrix[i][j] === 6,
+                  'style7': matrix[i][j] === 7
+                }">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="ready" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="1em">
+        <button mat-flat-button color="primary" (click)="blank()" mat-button>Todo en blanco</button>
+        <button mat-flat-button color="primary" (click)="genCode()" mat-button>Generar código para enviar</button>
+    </div>
+</div>

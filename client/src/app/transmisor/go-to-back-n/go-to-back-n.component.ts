@@ -54,6 +54,11 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
     });
   }
 
+  codeImage($event: string) {
+    this.dataForm.get('text').setValue($event);
+    this.code();
+  }
+
   code() {
     if (this.dataForm.valid) {
       if (this.config.methodArq === 'LRC') {

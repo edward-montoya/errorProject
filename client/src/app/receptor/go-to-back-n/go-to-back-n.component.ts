@@ -23,6 +23,9 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
   watchDog = 5;
   timer: any;
   unsuscribe: Subject<boolean> = new Subject<boolean>();
+  matrix: any = [[]];
+  row = 0;
+  column = 0;
 
   constructor(
     private vrc: VrcService,
@@ -42,6 +45,7 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
     }
   }
 
+  // tslint:disable: no-bitwise
   ngOnInit() {
     this.actualByte = 0;
     this.config = this.communicationService.getConfig();
@@ -71,6 +75,23 @@ export class GoToBackNComponent implements OnInit, OnDestroy {
                   this.tmpBytes = this.tmpBytes.filter(
                     p => p.join('') !== '11111111'
                   );
+                  if (this.config.infoType === 'image') {
+                    this.tmpBytes
+                      .map(e => e.join(''))
+                      .forEach(f => {
+                        if (f === '10000000') {
+                          this.row++;
+                          this.matrix[this.row] = new Array();
+                        } else {
+                          const n = parseInt(f, 2);
+                          const size = n & 0x0f;
+                          for (let i = 0; i < size; i++) {
+                            this.matrix[this.row].push((n & 0xf0) >> 4);
+                          }
+                          console.log(this.matrix);
+                        }
+                      });
+                  }
                   this.messages.push('Trama verificada, enviando ACK.');
                   this.bytes = [...this.bytes, ...this.tmpBytes];
                   this.tmpBytes = [];
